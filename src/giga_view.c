@@ -6,6 +6,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <spectrum.h>
 
 void di() __naked
 {
@@ -46,6 +47,9 @@ void copyImage() __z88dk_fastcall
 
 int main()
 {
+    tape_load_block(0xC000, 0x11, 0x00);
+    tape_load_block(0xC000, 0x1B00 + 0x300, 0xFF);
+
     di();
     copyImage();
     initIM2();

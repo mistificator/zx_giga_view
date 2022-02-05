@@ -12,6 +12,7 @@
 			"C:/z88dk/include"
 		],
 		"files.associations": {
+			"spectrum.h": "c"
 		}
 	}
 }

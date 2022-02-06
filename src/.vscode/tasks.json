@@ -16,43 +16,34 @@
               }
         },     
         {
-            "label": "build scr mk",
+            "label": "build scr0",
             "type": "process",
             "command": "z88dk-appmake.exe",
-            "args": ["+zx", "--binfile=${workspaceRoot}/../bin/mk.scr", "--org=49152", "--noloader", "--output=${workspaceRoot}/../bin/MK_SCR.TAP"],
+            "args": ["+zx", "--binfile=${workspaceRoot}/../bin/test.scr0", "--org=49152", "--noloader", "--output=${workspaceRoot}/../bin/SCR0.TAP"],
             "options": {"env": {"path": "%path%;C:/z88dk/bin/"}},
             "presentation": {
                 "showReuseMessage": false
               }
         },     
         {
-            "label": "merge mk",
-            "type": "shell",
-            "command": "cmd",
-            "args": ["/C", "copy", "/B", "/Y", "\"${workspaceRoot}\\..\\bin\\GIGAVIEW.TAP\" + \"${workspaceRoot}\\..\\bin\\MK_SCR.TAP\" \"${workspaceRoot}\\..\\bin\\GIGAVIEW_MK.TAP\""],
-            "presentation": {
-                "showReuseMessage": false
-              }
-        },     
-        {
-            "label": "build scr outrun",
+            "label": "build scr1",
             "type": "process",
             "command": "z88dk-appmake.exe",
-            "args": ["+zx", "--binfile=${workspaceRoot}/../bin/outrun.scr", "--org=49152", "--noloader", "--output=${workspaceRoot}/../bin/OUTRUN_SCR.TAP"],
+            "args": ["+zx", "--binfile=${workspaceRoot}/../bin/test.scr1", "--org=57344", "--noloader", "--output=${workspaceRoot}/../bin/SCR1.TAP"],
             "options": {"env": {"path": "%path%;C:/z88dk/bin/"}},
             "presentation": {
                 "showReuseMessage": false
               }
         },     
         {
-            "label": "merge outrun",
+            "label": "merge scr",
             "type": "shell",
             "command": "cmd",
-            "args": ["/C", "copy", "/B", "/Y", "\"${workspaceRoot}\\..\\bin\\GIGAVIEW.TAP\" + \"${workspaceRoot}\\..\\bin\\OUTRUN_SCR.TAP\" \"${workspaceRoot}\\..\\bin\\GIGAVIEW_OUTRUN.TAP\""],
+            "args": ["/C", "copy", "/B", "/Y", "\"${workspaceRoot}\\..\\bin\\GIGAVIEW.TAP\" + \"${workspaceRoot}\\..\\bin\\SCR0.TAP\" + \"${workspaceRoot}\\..\\bin\\SCR1.TAP\" \"${workspaceRoot}\\..\\bin\\GIGAVIEW_TEST.TAP\""],
             "presentation": {
                 "showReuseMessage": false
               }
-        },     
+        },        
         {
             "label": "build finish",
             "type": "shell",            
@@ -65,7 +56,7 @@
         {
             "label": "build",
             "dependsOrder": "sequence",
-            "dependsOn": ["build zx", "build scr mk", "merge mk", "build scr outrun", "merge outrun", "build finish"],    
+            "dependsOn": ["build zx", "build scr0", "build scr1", "merge scr", "build finish"],    
             "group": {
                 "kind": "build",
                 "isDefault": true

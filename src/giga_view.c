@@ -8,52 +8,58 @@
 #include <stdio.h>
 #include <spectrum.h>
 
-void di() __naked
-{
-#asm
-    di
-    ret
-#endasm
-}
-
-void ei() __naked
-{
-#asm
-    ei
-    ret
-#endasm
-}
-
 char screen = 0;
 M_BEGIN_ISR(isr)                    
 {
-    memcpy(0x5800, 0xD800 + 0x300 * (screen = (screen + 1) % 2), 0x300);
+#asm
+    ld a, (0x5B5C)
+    xor 0x08
+    or 0x07 | 0x10
+    ld bc, 0x7FFD
+    out (c), a
+    ld (0x5B5C), a
+#endasm
 }
 M_END_ISR
 
 void initIM2() __z88dk_fastcall
 {
-    im2_Init(0xbc00);
-    memset(0xbc00, 0xbd, 257);       // initialize 257-byte im2 vector table with all 0xb4 bytes
-    bpoke(0xbdbd, 0xc3);              // POKE jump instruction at address 0xb4b4 (interrupt service routine entry)
-    wpoke(0xbdbe, isr);  
-}
-
-void copyImage() __z88dk_fastcall
-{
-    zx_border(INK_BLACK);
-    memcpy(0x4000, 0xC000, 0x1B00);
+#asm
+    ld a, 0xBC
+    ld i, a
+    ld a, 0xBD
+    ld hl, 0xBC00
+    ld de, 0xBC01
+    ld bc, 257
+    ld (hl), a
+    ldir
+    ld a, 0xC3
+    ld (0xBDBD), a
+    ld de, _isr
+    ld (0xBDBE), de
+    im 2
+#endasm      
 }
 
 int main()
 {
-    tape_load_block(0xC000, 0x11, 0x00);
-    tape_load_block(0xC000, 0x1B00 + 0x300, 0xFF);
+#asm
+    ld a, 0x07 | 0x10
+    ld bc, 0x7FFD
+    out (c), a
+    ld (0x5B5C), a
+#endasm
 
-    di();
-    copyImage();
+    zx_cls();
+    zx_border(INK_BLACK);
+    memset(0x4000, 0, 0x1B00);
+
+    tape_load_block(0xFF00, 0x11, 0x00); // load header somewhere
+    tape_load_block(0xC000, 0x1B00, 0xFF);
+    tape_load_block(0xFF00, 0x11, 0x00); // load header somewhere
+    tape_load_block(0x4000, 0x1B00, 0xFF);
+
     initIM2();
-    ei();
 
     while (1);
 
